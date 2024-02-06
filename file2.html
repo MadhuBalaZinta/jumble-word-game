@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Game</title>
+  <link rel="stylesheet" href="file2.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #game-container {
+      display: none;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    #welcome-container{
+        background-image: url(images/grey.jpeg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-top: 10rem;
+        margin-left: 10rem;
+
+    }
+    #greeting{
+      font-size: 2rem;
+    }
+    #game-container #word-container{
+      border:2px solid black;
+      padding:6px;
+      color:brown;
+      background-color: burlywood;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="welcome-container">
+    <h1 style="font-weight: 60px;color: brown; font-family: Arial, Helvetica, sans-serif;font-size: 40px;">Welcome to the Game!!!</h1><br>
+    <label for="userName" style="text-align: center;padding-left: 90px;font-size: 25
+    px;"> Enter your name:</label><br>
+    <input type="text" id="userName"><br><br><br>
+    <button onclick="startGame()">Let's Start!!</button>
+  </div>
+
+  <div id="game-container">
+    <h2 id="greeting"></h2><br><br>
+    Let's start the game..... <br><br>
+    <div id="word-container"></div>
+    
+    <label for="userGuess">Your Guess:</label>
+    <input type="text" id="userGuess"><br><br>
+    <button onclick="checkGuess()" >Submit Guess</button>
+    <p id="result"></p>
+    <p id="finalMarks"></p>
+    <p id="finalMessage"></p><br>
+    <button onclick="playAgain()">Play Again</button>
+  </div>
+
+  <script>
+    let userName;
+    let currentWord;
+    let attempts = 0;
+    let score = 0;
+     
+
+    const words = ["react", 
+	"angular", 
+	"javascript", 
+	"bootstrap", 
+	"tailwind",
+	"programming",
+	"artificial",
+	"language",
+	"hypertext",
+	"augment",
+	"compliant",
+	"facebook",
+	"instagram",
+	"twitter",
+	"whatsapp",
+	"blackbox",
+	"squabble",
+	"accrue",
+"dupe",
+     "aesthetic"];
+
+    function startGame() {
+      userName = document.getElementById("userName").value;
+      if (userName.trim() === "") {
+        alert("Please enter your name.");
+        return;
+      }
+
+      document.getElementById("welcome-container").style.display = "none";
+      document.getElementById("game-container").style.display = "block";
+
+      document.getElementById("greeting").innerText =` Welcome ${userName}!!!! `;
+      startRound();
+    }
+
+    function startRound() {
+      currentWord = getRandomWord();
+      displayWord();
+      document.getElementById("userGuess").value = "";
+      document.getElementById("hint").value = "";
+      document.getElementById("result").innerText = "";
+      attempts = 0;
+    }
+
+    function getRandomWord() {
+      return words[Math.floor(Math.random() * words.length)];
+    }
+
+    function displayWord() {
+      const jumbledWord = shuffleWord(currentWord);
+      document.getElementById("word-container").innerText = jumbledWord;
+    }
+
+    function shuffleWord(word) {
+      return word.split('').sort(() => Math.random() - 0.5).join('');
+    }
+   function checkGuess() {
+      const userGuess = document.getElementById("userGuess").value.toLowerCase();
+
+      if (userGuess === currentWord) {
+        calculateScore();
+      } else {
+        attempts++;
+        if (attempts < 3) {
+          showResult(`Incorrect! Try again. (Attempts left: ${3 - attempts})`, "red");
+        } else {
+          showResult("Sorry, out of moves. 😢", "red");
+          document.getElementById("word-container").innerText = (`The correct word was: ${currentWord}`);
+          document.getElementById("userGuess").disabled = true;
+          
+        }
+      }
+    }
+
+    function showResult(message, color) {
+      document.getElementById("result").innerText = message;
+      document.getElementById("result").style.color = color;
+    }
+
+    function calculateScore() {
+      if (attempts === 0) {
+        score = 100;
+        showResult("Correct! 🌟", "green");
+      } else if (attempts === 1) {
+        score = 70;
+        showResult("Correct! 😊", "green");
+      } else if(attempts === 2) {
+        score = 40;
+        showResult("Correct! 😢", "green");
+      }
+
+      showFinalMarksAndMessage(score);
+    }
+
+    function showFinalMarksAndMessage(finalScore) {
+      document.getElementById("finalMarks").innerHTML =` Your marks: ${finalScore} ${getEmoji(finalScore)} `;
+      document.getElementById("finalMessage").innerHTML = getFinalMessage(finalScore);
+    }
+
+    function getEmoji(score) {
+      if (score === 100) return "⭐";
+      if (score === 70) return "😊";
+      if (score === 40) return "😢";
+    }
+
+    function getFinalMessage(score) {
+      if (score === 100) return "Excellent! ";
+      if (score === 70) return "Good job! ";
+      if (score === 40) return "Nice try. ";
+    }
+
+    function playAgain() {
+      document.getElementById("userGuess").disabled = false;
+      document.getElementById("finalMarks").innerText = "";
+      document.getElementById("finalMessage").innerText = "";
+      startRound();
+    }
+  </script>
+
+</body>
+</html>
